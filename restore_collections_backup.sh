@@ -91,6 +91,10 @@ while read -r line; do
     done < "$FILENAME"
 done < backup/collection_list.txt
 printf "\n\nFinished restoring data!\n\n"; 
+
+URL="${PROTOCOL}://${HOST}/utils/cache/clear"
+curl --location --request POST "${URL}" --header "Authorization: Bearer ${TOKEN}"
+
 printf "\n\n*************************************\n"; 
 printf "\n\nFinished !!!!!\n\n"; 
 printf "\n\n*************************************\n"; 
