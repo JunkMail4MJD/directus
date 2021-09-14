@@ -30,17 +30,17 @@ Just clone the repository and run `docker-compose up -d`
 
 ### Delete Collection
 
-* **Description**: This deletes a Directus collection.
-* **Usage**: `./delete_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>
+* **Description**: This <u>**deletes**</u> a Directus collection.
+* **Usage**: `./delete_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
 
 ### Download Collection
 
-* **Description**: This downloads a single Directus collection to a temp directory. It downloads the full definition of a collection and the first 20,000 items in the collection.
-* **Usage**: `./delete_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>
+* **Description**: This downloads a **single** Directus collection to a temp directory. It downloads the full definition of a collection and the first 20,000 items in the collection.
+* **Usage**: `./delete_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
 
 ### Export User Collections
 
-* **Description**: This downloads ALL USER generated Directus collections to the backup directory. It downloads the full definition of each collection and the first 20,000 items in the collection.
+* **Description**: This downloads **ALL USER generated** Directus collections to the backup directory. It downloads the full definition of each collection and the first 20,000 items in the collection.
 * **Usage**: `./export_user_collections.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN}`
 
 ### List User Collections
@@ -48,3 +48,22 @@ Just clone the repository and run `docker-compose up -d`
 * **Description**: This lists ALL USER generated Directus collections.
 * **Usage**: `./list_user_collections.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN}`
 
+### Load Relationships
+
+* **Description**: This loads the relationships for the specified Directus collection from the temp directory.
+* **Usage**: `./load_relationships.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
+
+### Restore User Collections 
+
+* **Description**: This uploads **ALL USER generated** Directus collections from the backup directory. It downloads the full definition of each collection and the items in the collection.
+* **Usage**: `./restore_collections_backup.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN}`
+
+### Upload Items Only 
+
+* **Description**: This uploads **just the items** for one Directus collection from the temp directory.
+* **Usage**: `./upload_items_only.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
+
+### Upload One Collection
+
+* **Description**: This uploads a **single** Directus collection from a temp directory. It uploads the full definition of a collection and items in the collection.
+* **Usage**: `./upload_one_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
