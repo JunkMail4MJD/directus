@@ -1,16 +1,14 @@
 #!/bin/bash
 set -e
-
 mkdir -p backup/
 
 printf "\n\n*************************************\n"; 
 printf "\n\nGetting list of user collections:\n"; 
 
-TOKEN="${DIRECTUS_TOKEN}"
-PROTOCOL="http"
-HOST="localhost:8055"
-URL="${PROTOCOL}://${HOST}/collections"
-curl --location --request GET "${URL}" \
+HOST="${1}"
+TOKEN="${2}"
+URL="${HOST}/collections"
+curl -k --location --request GET "${URL}" \
     --header "Authorization: Bearer ${TOKEN}" | \
     jq -r '.data | .[] | select(  (.collection | startswith("directus_") | not )) | .collection' > backup/collection_list.txt
 
@@ -19,9 +17,9 @@ if [ $? -eq 0 ]; then
     while read -r line; do
         COLLECTION="$line"
         printf "\n\n*************************************\n"; 
-        printf "Read line from config file: ${COLLECTION}\n"
+        printf "Fetching collection: ${COLLECTION}\n"
 
-        URL="${PROTOCOL}://${HOST}/collections/${COLLECTION}"
+        URL="${HOST}/collections/${COLLECTION}"
         curl --location --request GET "${URL}" \
             --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data' > backup/${COLLECTION}_collection.json
         if [ $? -eq 0 ]; then
@@ -31,7 +29,7 @@ if [ $? -eq 0 ]; then
             exit 1
         fi
 
-        URL="${PROTOCOL}://${HOST}/fields/${COLLECTION}"
+        URL="${HOST}/fields/${COLLECTION}"
         curl --location --request GET "${URL}" \
             --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data | .[]' | \
             jq -c 'if .schema.is_primary_key == true then del( .schema.is_unique ) else .  end' | jq -c 'del( .meta.id) | .' > backup/${COLLECTION}_fields.json
@@ -42,7 +40,7 @@ if [ $? -eq 0 ]; then
             exit 1
         fi
 
-        URL="${PROTOCOL}://${HOST}/relations/${COLLECTION}"
+        URL="${HOST}/relations/${COLLECTION}"
         curl --location --request GET "${URL}" \
             --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data | .[]' | jq -c 'del( .meta.id) | .' > backup/${COLLECTION}_relations.json
         if [ $? -eq 0 ]; then
@@ -52,7 +50,7 @@ if [ $? -eq 0 ]; then
             exit 1
         fi
 
-        URL="${PROTOCOL}://${HOST}/items/${COLLECTION}"
+        URL="${HOST}/items/${COLLECTION}"
         curl --location --request GET "${URL}" \
             --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data | .[]' | jq -c 'del( .user_created) | del( .user_updated) | del( .created_by) | del( .updated_by ) | .' > backup/${COLLECTION}_data.json
         if [ $? -eq 0 ]; then
@@ -72,7 +70,7 @@ if [ $? -eq 0 ]; then
         fi
     done < backup/collection_list.txt
 
-    URL="${PROTOCOL}://${HOST}/utils/cache/clear"
+    URL="${HOST}/utils/cache/clear"
     curl --location --request POST "${URL}" --header "Authorization: Bearer ${TOKEN}"
     printf "\n\nFinished!\n\n"; 
 else
