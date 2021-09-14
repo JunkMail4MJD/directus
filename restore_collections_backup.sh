@@ -4,19 +4,19 @@ set -e
 printf "\n\n*************************************\n"; 
 printf "\n\nGetting list of user collections:\n"; 
 
-TOKEN="${DIRECTUS_TOKEN}"
-PROTOCOL="http"
-HOST="localhost:8055"
+HOST="${1}"
+TOKEN="${2}"
+URL="${HOST}/collections"
 
 # POST "/collections"
 printf "\n\n*************************************\n"; 
-printf "Restoring user collections to: ${PROTOCOL}://${HOST}/\n"
+printf "Restoring user collections to: ${HOST}\n"
 while read -r line; do
     COLLECTION="$line"
     printf "Read line from config file: ${COLLECTION}\n"
 
     FILENAME="backup/${COLLECTION}_schema.json"
-    URL="${PROTOCOL}://${HOST}/collections"
+    URL="${HOST}/collections"
     while read -r line; do
         record="$line"
         printf "\n\nSchema read from file: ${FILENAME}\n\n"
@@ -38,13 +38,13 @@ printf "\n\nFinished creating collection schemas!\n\n";
 
 # POST "/relations"
 printf "\n\n*************************************\n"; 
-printf "Restoring collection relationships to: ${PROTOCOL}://${HOST}/\n"
+printf "Restoring collection relationships to: ${HOST}\n"
 while read -r line; do
     COLLECTION="$line"
     printf "Read line from config file: ${COLLECTION}\n"
 
     FILENAME="backup/${COLLECTION}_relations.json"
-    URL="${PROTOCOL}://${HOST}/relations"
+    URL="${HOST}/relations"
     while read -r line; do
         record="$line"
         printf "\n\nRead relationship from file: ${FILENAME}\n\n"
@@ -66,13 +66,13 @@ printf "\n\nFinished creating collection relationships!\n\n";
 
 # POST "/items/":collection
 printf "\n\n*************************************\n"; 
-printf "Restoring collection data to: ${PROTOCOL}://${HOST}/\n"
+printf "Restoring collection data to: ${HOST}\n"
 while read -r line; do
     COLLECTION="$line"
     printf "Read line from config file: ${COLLECTION}\n"
 
     FILENAME="backup/${COLLECTION}_data.json"
-    URL="${PROTOCOL}://${HOST}/items/${COLLECTION}"
+    URL="${HOST}/items/${COLLECTION}"
     while read -r line; do
         record="$line"
         printf "\n\nRead record from file: ${FILENAME}\n\n"
@@ -91,10 +91,10 @@ while read -r line; do
     done < "$FILENAME"
 done < backup/collection_list.txt
 printf "\n\nFinished restoring data!\n\n"; 
+printf "\n\n*************************************\n"; 
 
-URL="${PROTOCOL}://${HOST}/utils/cache/clear"
+URL="${HOST}/utils/cache/clear"
 curl --location --request POST "${URL}" --header "Authorization: Bearer ${TOKEN}"
 
-printf "\n\n*************************************\n"; 
 printf "\n\nFinished !!!!!\n\n"; 
 printf "\n\n*************************************\n"; 
