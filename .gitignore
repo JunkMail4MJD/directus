@@ -1,3 +1,16 @@
+data 
+dev 
+qa
+prod
+directus-main
+localhost 
+uploads
+source_me.sh
+temp
+
+.DS_Store
+directus-main.zip
+
 # Logs
 logs
 *.log
