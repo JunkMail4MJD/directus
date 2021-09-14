@@ -1,57 +1,80 @@
 #!/bin/bash
-PROTOCOL="http"
-HOST="localhost:8055"
-TOKEN="${DIRECTUS_TOKEN}"
-COLLECTION="${1}"
+set -e
+HOST="${1}"
+TOKEN="${2}"
+COLLECTION="${3}"
 
 # POST "/collections"
 printf "\n\n*************************************\n"; 
-printf "\n\nCreating collection:\n"; 
-printf "\n\n...defining collection for: ${COLLECTION}\n"; 
-FILENAME="${COLLECTION}_schema.json"
-PATH_ELEMENT="/collections"
-URL="${PROTOCOL}://${HOST}${PATH_ELEMENT}"
+printf "Restoring user collection ${COLLECTION} to: ${HOST}\n\n"
+
+FILENAME="temp/${COLLECTION}_schema.json"
+URL="${HOST}/collections"
 while read -r line; do
     record="$line"
-    printf "\n\nRecord read from file: ${FILENAME}\n\n"
+    printf "\n\nSchema read from file: ${FILENAME}\n\n"
 
     curl --location --request POST "${URL}" \
         --header "Authorization: Bearer ${TOKEN}" \
         --header 'Content-Type: application/json' \
         --data-raw "${record}"
+
+    if [ $? -eq 0 ]; then
+        printf "\n\n...created user collection: ${COLLECTION} at: ${URL}\n"
+    else
+        printf "\n\nFAILED to create user collection: ${COLLECTION} at: ${URL}\n $?\n\n";
+        exit 1
+    fi
 done < "$FILENAME"
-printf "\n\n...finished defining collections.\n"; 
+
+printf "\n\nFinished creating collection schema!\n\n"; 
 
 # POST "/relations"
 printf "\n\n*************************************\n"; 
-printf "\n\nCreating relations:\n"; 
-printf "\n\n...defining relations for: ${COLLECTION}\n"; 
-FILENAME="${COLLECTION}_relations.json"
-PATH_ELEMENT="/relations"
-URL="${PROTOCOL}://${HOST}${PATH_ELEMENT}"
+printf "Restoring relationships to: ${HOST}\n"
+FILENAME="temp/${COLLECTION}_relations.json"
+URL="${HOST}/relations"
 while read -r line; do
     record="$line"
-    printf "\n\nRecord read from file: ${FILENAME}\n\n"
+    printf "\n\nRead relationship from file: ${FILENAME}\n\n"
+
     curl --location --request POST "${URL}" \
         --header "Authorization: Bearer ${TOKEN}" \
         --header 'Content-Type: application/json' \
         --data-raw "${record}"
+
+    if [ $? -eq 0 ]; then
+        printf "\n\n...created collection relationship for ${COLLECTION} at: ${URL}\n"
+    else
+        printf "\n\nFAILED to create collection relationships for ${COLLECTION} at: ${URL}\n $?\n\n";
+        exit 1
+    fi
 done < "$FILENAME"
-printf "\n\n...finished defining relations.\n"; 
+printf "\n\nFinished creating collection relationships!\n\n"; 
 
 # POST "/items/":collection
 printf "\n\n*************************************\n"; 
-printf "\n\nCreating items:\n"; 
-printf "\n\n...creating items for: ${COLLECTION}\n"; 
-FILENAME="${COLLECTION}_data.json"
-PATH_ELEMENT="/items/${COLLECTION}"
-URL="${PROTOCOL}://${HOST}${PATH_ELEMENT}"
+printf "Restoring collection data to: ${HOST}/\n"
+FILENAME="temp/${COLLECTION}_data.json"
+URL="${HOST}/items/${COLLECTION}"
 while read -r line; do
     record="$line"
-    printf "\n\nRecord read from file: ${FILENAME}\n\n"
+    printf "\n\nRead record from file: ${FILENAME}\n\n"
+
     curl --location --request POST "${URL}" \
         --header "Authorization: Bearer ${TOKEN}" \
         --header 'Content-Type: application/json' \
         --data-raw "${record}"
+
+    if [ $? -eq 0 ]; then
+        printf "\n\n...Added record to collection: ${COLLECTION} at: ${URL}\n"
+    else
+        printf "\n\nFAILED to add record to collection: ${COLLECTION} at: ${URL}\n $?\n\n";
+        exit 1
+    fi
 done < "$FILENAME"
-printf "\n\n...finished loading data.\n"; 
+
+printf "\n\nFinished restoring data!\n\n"; 
+printf "\n\n*************************************\n"; 
+printf "\n\nFinished uploading collection: ${COLLECTION}!!!!!\n\n"; 
+printf "\n\n*************************************\n"; 
