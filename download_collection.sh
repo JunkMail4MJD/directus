@@ -34,7 +34,7 @@ else
     exit 1
 fi
 
-curl --location --request GET "${HOST}/items/${COLLECTION}" \
+curl --location --request GET "${HOST}/items/${COLLECTION}?limit=20000" \
     --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data | .[]' | jq -c 'del( .user_created) | del( .user_updated) | del( .created_by) | del( .updated_by ) | .' > temp/${COLLECTION}_data.json
 if [ $? -eq 0 ]; then
     printf "...retrieved the collection's data from: ${URL}\n"
