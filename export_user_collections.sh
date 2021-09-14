@@ -50,7 +50,7 @@ if [ $? -eq 0 ]; then
             exit 1
         fi
 
-        URL="${HOST}/items/${COLLECTION}"
+        URL="${HOST}/items/${COLLECTION}?limit=20000"
         curl --location --request GET "${URL}" \
             --header "Authorization: Bearer ${TOKEN}" | jq -cs '.[] | .data | .[]' | jq -c 'del( .user_created) | del( .user_updated) | del( .created_by) | del( .updated_by ) | .' > backup/${COLLECTION}_data.json
         if [ $? -eq 0 ]; then
