@@ -36,7 +36,7 @@ Just clone the repository and run `docker-compose up -d`
 ### Download Collection
 
 * **Description**: This downloads a **single** Directus collection to a temp directory. It downloads the full definition of a collection and the first 20,000 items in the collection.
-* **Usage**: `./delete_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
+* **Usage**: `./download_collection.sh ${DIRECTUS_LOCALHOST} ${DIRECTUS_LOCALHOST_TOKEN} <COLLECTION_NAME>`
 
 ### Export User Collections
 
